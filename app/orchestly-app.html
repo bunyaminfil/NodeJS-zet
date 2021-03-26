@@ -5,33 +5,65 @@
 	<meta charset="UTF-8">
 	<title>Orchestly - Apps</title>
 </head>
+<style>
+	table {
+		font-family: arial, sans-serif;
+		border-collapse: collapse;
+		width: 100%;
+	}
+
+	td,
+	th {
+		border: 1px solid #dddddd;
+		text-align: left;
+		padding: 8px;
+	}
+
+	tr:nth-child(even) {
+		background-color: #dddddd;
+	}
+</style>
 
 <body>
 	<h2>FORM</h2>
 	<input type="text" id="OperationId" placeholder="OperationId"><br><br>
 	<button type="button" onclick="getInputValue();">Get Value</button><br><br>
-	<span id="data"></span>
+	<span id="data"></span><br><br>
+	<span id="orc"></span>
+	<h2>Job Details</h2>
+	<table>
+		<tr>
+			<th>JobID</th>
+			<th>Title</th>
+			<th>Owner Name</th>
+		</tr>
+		<tr>
+			<td id="td1"></td>
+			<td id="td2"></td>
+			<td id="td3"></td>
+		</tr>
+	</table>
 </body>
 <script src="https://js.zohostatic.com/blueprint/extension/ore2/js/orchestly.extension.client.sdk-0.1_min.js"></script>
 <script>
-	const objects = [
-		{
-			OperationId: 1,
-			paymentType: "Credit Card",
-			amount: 1000,
-			currency: "USD",
-			paymentDate: "01.02.2021",
-			description: "Deposit"
-		},
-		{
-			OperationId: 2,
-			paymentType: "Cash",
-			amount: 3000,
-			currency: "USD",
-			paymentDate: "03.02.2021",
-			description: "Remaining amount paid as cache"
-		}
+	const objects = [{
+		OperationId: 1,
+		paymentType: "Credit Card",
+		amount: 1000,
+		currency: "USD",
+		paymentDate: "01.02.2021",
+		description: "Deposit"
+	},
+	{
+		OperationId: 2,
+		paymentType: "Cash",
+		amount: 3000,
+		currency: "USD",
+		paymentDate: "03.02.2021",
+		description: "Remaining amount paid as cache"
+	}
 	];
+
 	function getInputValue() {
 		const El_id = document.getElementById("OperationId").value;
 		console.log(El_id)
@@ -43,14 +75,22 @@
 			}
 		}
 	}
+
 	window.onload = function () {
 		OrchestlySDK.init().then(function (App) {
 
 			//Get 
-			OrchestlySDK.get('job.jobdetails').then(function (res) {
+			OrchestlySDK.get('job.jobdetails').then((res) => {
 				//response Handling
+				const data = Object.values(res)[0]
+				console.log(data)
+				document.getElementById("orc").innerHTML = data.record_owner_name
+				document.getElementById("td1").innerHTML = data.jobid
+				document.getElementById("td2").innerHTML = data.title
+				document.getElementById("td3").innerHTML = data.record_owner_name
 			}).catch(function (err) {
 				//error Handling
+				console.log(err)
 			});
 
 			//Set 
@@ -71,7 +111,9 @@
 				//error Handling
 			});
 
-			OrchestlySDK.retrieve({ "key": "key_to_retrieve" }).then(function (response) {
+			OrchestlySDK.retrieve({
+				"key": "key_to_retrieve"
+			}).then(function (response) {
 				//response Handling
 			}).catch(function (err) {
 				//error Handling
@@ -84,7 +126,13 @@
 			})
 
 			//Request 3rd party api's
-			var options = { url: "url_to_hit", type: "get/post", payload: "request_payload", parameters: {}, headers: {} };
+			var options = {
+				url: "url_to_hit",
+				type: "get/post",
+				payload: "request_payload",
+				parameters: {},
+				headers: {}
+			};
 			OrchestlySDK.request(options).then(function (value) {
 				//response Handling
 			}).catch(function (err) {
